@@ -11,4 +11,11 @@ GPT_weights
 SoVITS_weights
 TEMP
 
-
+*.exe
+*.pth
+*.onnx
+*.ckpt
+*.safetensors
+models/
+gweight.txt
+sweight.txt

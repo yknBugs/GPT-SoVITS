@@ -663,37 +663,37 @@ with gr.Blocks(title="GPT-SoVITS WebUI") as app:
                 uvr5_info = gr.Textbox(label=i18n("UVR5进程输出信息"))
             gr.Markdown(value=i18n("0b-语音切分工具"))
             with gr.Row():
-                with gr.Row():
-                    slice_inp_path=gr.Textbox(label=i18n("音频自动切分输入路径，可文件可文件夹"),value="")
-                    slice_opt_root=gr.Textbox(label=i18n("切分后的子音频的输出根目录"),value="output/slicer_opt")
-                    threshold=gr.Textbox(label=i18n("threshold:音量小于这个值视作静音的备选切割点"),value="-34")
-                    min_length=gr.Textbox(label=i18n("min_length:每段最小多长，如果第一段太短一直和后面段连起来直到超过这个值"),value="4000")
-                    min_interval=gr.Textbox(label=i18n("min_interval:最短切割间隔"),value="300")
-                    hop_size=gr.Textbox(label=i18n("hop_size:怎么算音量曲线，越小精度越大计算量越高（不是精度越大效果越好）"),value="10")
-                    max_sil_kept=gr.Textbox(label=i18n("max_sil_kept:切完后静音最多留多长"),value="500")
-                with gr.Row():
-                    open_slicer_button=gr.Button(i18n("开启语音切割"), variant="primary",visible=True)
-                    close_slicer_button=gr.Button(i18n("终止语音切割"), variant="primary",visible=False)
-                    _max=gr.Slider(minimum=0,maximum=1,step=0.05,label=i18n("max:归一化后最大值多少"),value=0.9,interactive=True)
-                    alpha=gr.Slider(minimum=0,maximum=1,step=0.05,label=i18n("alpha_mix:混多少比例归一化后音频进来"),value=0.25,interactive=True)
-                    n_process=gr.Slider(minimum=1,maximum=n_cpu,step=1,label=i18n("切割使用的进程数"),value=4,interactive=True)
-                    slicer_info = gr.Textbox(label=i18n("语音切割进程输出信息"))
+                slice_inp_path=gr.Textbox(label=i18n("音频自动切分输入路径，可文件可文件夹"),value="")
+                slice_opt_root=gr.Textbox(label=i18n("切分后的子音频的输出根目录"),value="output/slicer_opt")
+            with gr.Row():
+                threshold=gr.Textbox(label=i18n("threshold:音量小于这个值视作静音的备选切割点"),value="-34")
+                min_length=gr.Textbox(label=i18n("min_length:每段最小多长，如果第一段太短一直和后面段连起来直到超过这个值"),value="4000")
+                min_interval=gr.Textbox(label=i18n("min_interval:最短切割间隔"),value="300")
+                hop_size=gr.Textbox(label=i18n("hop_size:怎么算音量曲线，越小精度越大计算量越高（不是精度越大效果越好）"),value="10")
+                max_sil_kept=gr.Textbox(label=i18n("max_sil_kept:切完后静音最多留多长"),value="500")
+            with gr.Row():
+                _max=gr.Slider(minimum=0,maximum=1,step=0.05,label=i18n("max:归一化后最大值多少"),value=0.9,interactive=True)
+                alpha=gr.Slider(minimum=0,maximum=1,step=0.05,label=i18n("alpha_mix:混多少比例归一化后音频进来"),value=0.25,interactive=True)
+                n_process=gr.Slider(minimum=1,maximum=n_cpu,step=1,label=i18n("切割使用的进程数"),value=4,interactive=True)
+            with gr.Row():
+                slicer_info = gr.Textbox(label=i18n("语音切割进程输出信息"))
+            with gr.Row():
+                open_slicer_button=gr.Button(i18n("开启语音切割"), variant="primary",visible=True)
+                close_slicer_button=gr.Button(i18n("终止语音切割"), variant="primary",visible=False)
             gr.Markdown(value=i18n("0c-中文批量离线ASR工具"))
             with gr.Row():
-                open_asr_button = gr.Button(i18n("开启离线批量ASR"), variant="primary",visible=True)
-                close_asr_button = gr.Button(i18n("终止ASR进程"), variant="primary",visible=False)
+                asr_inp_dir = gr.Textbox(
+                    label=i18n("输入文件夹路径"),
+                    value="D:\\GPT-SoVITS\\raw\\xxx",
+                    interactive=True,
+                )
+                asr_opt_dir = gr.Textbox(
+                    label       = i18n("输出文件夹路径"),
+                    value       = "output/asr_opt",
+                    interactive = True,
+                )
+            with gr.Row():
                 with gr.Column():
-                    with gr.Row():
-                        asr_inp_dir = gr.Textbox(
-                            label=i18n("输入文件夹路径"),
-                            value="D:\\GPT-SoVITS\\raw\\xxx",
-                            interactive=True,
-                        )
-                        asr_opt_dir = gr.Textbox(
-                            label       = i18n("输出文件夹路径"),
-                            value       = "output/asr_opt",
-                            interactive = True,
-                        )
                     with gr.Row():
                         asr_model = gr.Dropdown(
                             label       = i18n("ASR 模型"),
@@ -713,8 +713,11 @@ with gr.Blocks(title="GPT-SoVITS WebUI") as app:
                             interactive = True,
                             value="zh"
                         )
-                    with gr.Row():
-                        asr_info = gr.Textbox(label=i18n("ASR进程输出信息"))
+                with gr.Column():
+                    asr_info = gr.Textbox(label=i18n("ASR进程输出信息"))
+            with gr.Row():
+                open_asr_button = gr.Button(i18n("开启离线批量ASR"), variant="primary",visible=True)
+                close_asr_button = gr.Button(i18n("终止ASR进程"), variant="primary",visible=False)  
 
                 def change_lang_choices(key): #根据选择的模型修改可选的语言
                     # return gr.Dropdown(choices=asr_dict[key]['lang'])
@@ -761,27 +764,31 @@ with gr.Blocks(title="GPT-SoVITS WebUI") as app:
                 with gr.Row():
                     gpu_numbers1a = gr.Textbox(label=i18n("GPU卡号以-分割，每个卡号一个进程"),value="%s-%s"%(gpus,gpus),interactive=True)
                     bert_pretrained_dir = gr.Textbox(label=i18n("预训练的中文BERT模型路径"),value="GPT_SoVITS/pretrained_models/chinese-roberta-wwm-ext-large",interactive=False)
+                    info1a=gr.Textbox(label=i18n("文本进程输出信息"))
+                with gr.Row():
                     button1a_open = gr.Button(i18n("开启文本获取"), variant="primary",visible=True)
                     button1a_close = gr.Button(i18n("终止文本获取进程"), variant="primary",visible=False)
-                    info1a=gr.Textbox(label=i18n("文本进程输出信息"))
                 gr.Markdown(value=i18n("1Ab-SSL自监督特征提取"))
                 with gr.Row():
                     gpu_numbers1Ba = gr.Textbox(label=i18n("GPU卡号以-分割，每个卡号一个进程"),value="%s-%s"%(gpus,gpus),interactive=True)
                     cnhubert_base_dir = gr.Textbox(label=i18n("预训练的SSL模型路径"),value="GPT_SoVITS/pretrained_models/chinese-hubert-base",interactive=False)
+                    info1b=gr.Textbox(label=i18n("SSL进程输出信息"))
+                with gr.Row():
                     button1b_open = gr.Button(i18n("开启SSL提取"), variant="primary",visible=True)
                     button1b_close = gr.Button(i18n("终止SSL提取进程"), variant="primary",visible=False)
-                    info1b=gr.Textbox(label=i18n("SSL进程输出信息"))
                 gr.Markdown(value=i18n("1Ac-语义token提取"))
                 with gr.Row():
                     gpu_numbers1c = gr.Textbox(label=i18n("GPU卡号以-分割，每个卡号一个进程"),value="%s-%s"%(gpus,gpus),interactive=True)
+                    info1c=gr.Textbox(label=i18n("语义token提取进程输出信息"))
+                with gr.Row():
                     button1c_open = gr.Button(i18n("开启语义token提取"), variant="primary",visible=True)
                     button1c_close = gr.Button(i18n("终止语义token提取进程"), variant="primary",visible=False)
-                    info1c=gr.Textbox(label=i18n("语义token提取进程输出信息"))
                 gr.Markdown(value=i18n("1Aabc-训练集格式化一键三连"))
+                with gr.Row():
+                    info1abc=gr.Textbox(label=i18n("一键三连进程输出信息"))
                 with gr.Row():
                     button1abc_open = gr.Button(i18n("开启一键三连"), variant="primary",visible=True)
                     button1abc_close = gr.Button(i18n("终止一键三连"), variant="primary",visible=False)
-                    info1abc=gr.Textbox(label=i18n("一键三连进程输出信息"))
             button1a_open.click(open1a, [inp_text,inp_wav_dir,exp_name,gpu_numbers1a,bert_pretrained_dir], [info1a,button1a_open,button1a_close])
             button1a_close.click(close1a, [], [info1a,button1a_open,button1a_close])
             button1b_open.click(open1b, [inp_text,inp_wav_dir,exp_name,gpu_numbers1Ba,cnhubert_base_dir], [info1b,button1b_open,button1b_close])
@@ -794,29 +801,31 @@ with gr.Blocks(title="GPT-SoVITS WebUI") as app:
                 gr.Markdown(value=i18n("1Ba-SoVITS训练。用于分享的模型文件输出在SoVITS_weights下。"))
                 with gr.Row():
                     batch_size = gr.Slider(minimum=1,maximum=40,step=1,label=i18n("每张显卡的batch_size"),value=default_batch_size,interactive=True)
-                    total_epoch = gr.Slider(minimum=1,maximum=25,step=1,label=i18n("总训练轮数total_epoch，不建议太高"),value=8,interactive=True)
+                    total_epoch = gr.Slider(minimum=1,maximum=500,step=1,label=i18n("总训练轮数total_epoch，不建议太高"),value=8,interactive=True)
                     text_low_lr_rate = gr.Slider(minimum=0.2,maximum=0.6,step=0.05,label=i18n("文本模块学习率权重"),value=0.4,interactive=True)
                     save_every_epoch = gr.Slider(minimum=1,maximum=25,step=1,label=i18n("保存频率save_every_epoch"),value=4,interactive=True)
                     if_save_latest = gr.Checkbox(label=i18n("是否仅保存最新的ckpt文件以节省硬盘空间"), value=True, interactive=True, show_label=True)
                     if_save_every_weights = gr.Checkbox(label=i18n("是否在每次保存时间点将最终小模型保存至weights文件夹"), value=True, interactive=True, show_label=True)
                     gpu_numbers1Ba = gr.Textbox(label=i18n("GPU卡号以-分割，每个卡号一个进程"), value="%s" % (gpus), interactive=True)
                 with gr.Row():
+                    info1Ba=gr.Textbox(label=i18n("SoVITS训练进程输出信息"))
+                with gr.Row():
                     button1Ba_open = gr.Button(i18n("开启SoVITS训练"), variant="primary",visible=True)
                     button1Ba_close = gr.Button(i18n("终止SoVITS训练"), variant="primary",visible=False)
-                    info1Ba=gr.Textbox(label=i18n("SoVITS训练进程输出信息"))
                 gr.Markdown(value=i18n("1Bb-GPT训练。用于分享的模型文件输出在GPT_weights下。"))
                 with gr.Row():
                     batch_size1Bb = gr.Slider(minimum=1,maximum=40,step=1,label=i18n("每张显卡的batch_size"),value=default_batch_size,interactive=True)
-                    total_epoch1Bb = gr.Slider(minimum=2,maximum=50,step=1,label=i18n("总训练轮数total_epoch"),value=15,interactive=True)
+                    total_epoch1Bb = gr.Slider(minimum=2,maximum=500,step=1,label=i18n("总训练轮数total_epoch"),value=15,interactive=True)
                     if_dpo = gr.Checkbox(label=i18n("是否开启dpo训练选项(实验性)"), value=False, interactive=True, show_label=True)
                     if_save_latest1Bb = gr.Checkbox(label=i18n("是否仅保存最新的ckpt文件以节省硬盘空间"), value=True, interactive=True, show_label=True)
                     if_save_every_weights1Bb = gr.Checkbox(label=i18n("是否在每次保存时间点将最终小模型保存至weights文件夹"), value=True, interactive=True, show_label=True)
                     save_every_epoch1Bb = gr.Slider(minimum=1,maximum=50,step=1,label=i18n("保存频率save_every_epoch"),value=5,interactive=True)
                     gpu_numbers1Bb = gr.Textbox(label=i18n("GPU卡号以-分割，每个卡号一个进程"), value="%s" % (gpus), interactive=True)
                 with gr.Row():
+                    info1Bb=gr.Textbox(label=i18n("GPT训练进程输出信息"))
+                with gr.Row():
                     button1Bb_open = gr.Button(i18n("开启GPT训练"), variant="primary",visible=True)
                     button1Bb_close = gr.Button(i18n("终止GPT训练"), variant="primary",visible=False)
-                    info1Bb=gr.Textbox(label=i18n("GPT训练进程输出信息"))
             button1Ba_open.click(open1Ba, [batch_size,total_epoch,exp_name,text_low_lr_rate,if_save_latest,if_save_every_weights,save_every_epoch,gpu_numbers1Ba,pretrained_s2G,pretrained_s2D], [info1Ba,button1Ba_open,button1Ba_close])
             button1Ba_close.click(close1Ba, [], [info1Ba,button1Ba_open,button1Ba_close])
             button1Bb_open.click(open1Bb, [batch_size1Bb,total_epoch1Bb,exp_name,if_dpo,if_save_latest1Bb,if_save_every_weights1Bb,save_every_epoch1Bb,gpu_numbers1Bb,pretrained_s1],   [info1Bb,button1Bb_open,button1Bb_close])
@@ -827,6 +836,7 @@ with gr.Blocks(title="GPT-SoVITS WebUI") as app:
                     GPT_dropdown = gr.Dropdown(label=i18n("*GPT模型列表"), choices=sorted(GPT_names,key=custom_sort_key),value=pretrained_gpt_name,interactive=True)
                     SoVITS_dropdown = gr.Dropdown(label=i18n("*SoVITS模型列表"), choices=sorted(SoVITS_names,key=custom_sort_key),value=pretrained_sovits_name,interactive=True)
                     gpu_number_1C=gr.Textbox(label=i18n("GPU卡号,只能填1个整数"), value=gpus, interactive=True)
+                with gr.Row():
                     refresh_button = gr.Button(i18n("刷新模型路径"), variant="primary")
                     refresh_button.click(fn=change_choices,inputs=[],outputs=[SoVITS_dropdown,GPT_dropdown])
                 with gr.Row():
