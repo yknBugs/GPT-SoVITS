@@ -152,8 +152,10 @@ with gr.Blocks(title="UVR5 WebUI") as app:
                             value="flac",
                             interactive=True,
                         )
-                    but2 = gr.Button(i18n("转换"), variant="primary")
+                with gr.Row():
                     vc_output4 = gr.Textbox(label=i18n("输出信息"))
+                with gr.Row():
+                    but2 = gr.Button(i18n("转换"), variant="primary")
                     but2.click(
                         uvr,
                         [
